@@ -1,6 +1,7 @@
 # Genshin-piano
 
-原神风物之诗琴网页版：[GitHub Pages](https://blog.ranying.xyz/Genshin-piano/)
+原神风物之诗琴网页版：[点此跳转](https://mimangz.github.io/Windsong-Lyre-Simulator/ref)
+原作者：[Ran-ying](https://github.com/Ran-ying/Genshin-piano)
 
 ## TO DO
 
