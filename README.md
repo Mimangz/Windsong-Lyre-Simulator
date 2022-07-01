@@ -5,4 +5,4 @@
 
 访问地址：[https://mimangz.github.io/Windsong-Lyre-Simulator/](https://mimangz.github.io/Windsong-Lyre-Simulator/)
 
-ref文件夹内为一个大佬的参考。
+ref文件夹内为一个大佬的程序参考。
