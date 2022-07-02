@@ -77,7 +77,7 @@ touch-action: manipulation;
             50% {
                 /*按下时变小变暗*/
                 transform: scale(0.9);
-                filter: brightness(0.85);
+                filter: brightness(0.8);
             }
 
             100% {
@@ -156,7 +156,7 @@ touch-action: manipulation;
             for (let i = 0; i < 3; i++) {
                 for (let j = 0; j < 7; j++) {    //格式化写入img标签，写入3×7次
                     document.write("<img src=\"image/" + (j + 1) + ".svg\" id=\"" +
-                        ((2 - i) * 7 + j + 1) + "\" touchstart = \"playDo(this.id)\">");
+                        ((2 - i) * 7 + j + 1) + "\" onclick = \"playDo(this.id)\">");
                 }
                 document.write("<br>");
             }
