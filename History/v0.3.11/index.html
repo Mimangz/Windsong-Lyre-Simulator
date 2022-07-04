@@ -1,0 +1,393 @@
+<!DOCTYPE HTML>
+<!--
+    原神风物之诗琴模拟器 by嘉鸿子
+    嘉鸿子的梦想启航项目！边做边学！
+
+    更新日志：
+    --20220701--
+    [0.1]项目创建，实现基本功能（鼠标演奏）
+    [0.1.1]优化代码与文件结构，使用document.write方法创建按钮
+
+    --20220702--
+    [0.2]增加键盘操作，键位与原神游戏内一致
+    [0.3]增加按键动画，美化界面
+
+    --20220704--
+    [0.3.1]优化CSS，使得按键圆在没有按键按下时不显示
+    [0.3.2]优化CSS，使得按键贴图丢失时也不会排版混乱
+    [0.3.3]优化CSS，使得在正常情况下按键圆不会溢出屏幕
+    [0.3.4]修改背景为填充而不是平铺以美化界面
+    [0.3.5]修复了未松开按键时会重复播放音符的bug
+    [0.3.6]为按键区域增加不可选中属性，避免意外选中
+    [0.3.7]将onclick事件修改为onmousedown，提升使用体验
+    [0.3.8]优化按键和按键圆的动画关键帧，美化显示效果
+    [0.3.9]为演奏区域添加背景五线谱，更贴近原版
+    [0.3.10]添加启动界面，资源加载完成后才可进入主体，优化使用体验
+    [0.3.11]按照Edge浏览器的控制台给出的警告，修复了一些严谨问题
+
+    更新计划（暂定）：
+    [0.4]添加关于信息等子界面，添加帮助
+    [1.0]增加自动演奏、自定义编曲功能
+    [1.1]增加曲目库功能
+    [1.5]增加账号系统，允许存储、分享曲目
+    [2.0]增加游戏模式
+    ……
+
+    补充说明：
+    源代码中标注了(严谨)注释的代码段可有可无，
+    不过建议加上，否则会在控制台中出现奇怪的Error，
+    但这些Error不影响网页运作……强迫症行为_(:з」∠)_
+
+    总之做自己喜欢的事情就好，别管别人的！
+-->
+<html lang="zh">
+<!-- 最好加上语言标识(严谨) -->
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- 添加移动设备访问适配(严谨) -->
+    <meta name="viewport" content="width = device-width , initial-scale = 1" />
+
+    <title>原神风物之诗琴模拟器</title>
+
+    <style type="text/css">
+        body {
+            /*给出主体背景*/
+            background: url(image/bg.jpg);
+            background-size: cover;
+            background-color: black;
+        }
+
+        .load {
+            /*给出加载背景*/
+            background-color: royalblue;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .loadbox {
+            /*加载信息框*/
+            width: 600px;
+            margin: 60px auto;
+            background-color: dodgerblue;
+            box-shadow: 0 0 20px 20px dodgerblue;
+        }
+
+        .progressbar {
+            /*进度条*/
+            background-color: #eee;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 5px;
+            height: 16px;
+            width: 250px;
+            border: 1px solid #bbb;
+        }
+
+        .progressbar .bar {
+            background-color: royalblue;
+            height: 16px;
+            width: 0;
+        }
+
+        .staff {
+            /*背景五线谱，底部居中*/
+            width: 780px;
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translate(-50%, -5%);
+            /*防止意外选中*/
+            /*出于兼容性加上下面这条(严谨)*/
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .staff img {
+            /*控制五线谱大小*/
+            width: 113%;
+            margin-left: -106px;
+            /*防止意外拖动*/
+            -webkit-user-drag: none;
+        }
+
+        .show {
+            /*按键区域，底部居中*/
+            width: 780px;
+            position: absolute;
+            /*为底部留一定的余量*/
+            bottom: 10px;
+            left: 50%;
+            transform: translate(-50%, -5%);
+            /*防止意外选中*/
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .show img {
+            /*控制按键大小*/
+            width: 75px;
+            height: 75px;
+            /*控制按键间距*/
+            margin-right: 35px;
+            margin-top: 25px;
+            /*防止意外拖动*/
+            -webkit-user-drag: none;
+        }
+
+        .keyAni {
+            animation: keyAni 0.5s linear;
+        }
+
+        @keyframes keyAni {
+
+            /*琴键按下的动画*/
+            0% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+
+            50% {
+                /*按下时变小变暗*/
+                transform: scale(0.9);
+                filter: brightness(0.8);
+            }
+
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+        }
+
+        .circleAni {
+            animation: circleAni 0.5s linear;
+        }
+
+        @keyframes circleAni {
+
+            /*琴键按下后按键圆的动画*/
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            50% {
+                /*按下时变大*/
+                transform: scale(1.3);
+                opacity: 0.8;
+            }
+
+            100% {
+                /*最后淡出*/
+                transform: scale(1.6);
+                opacity: 0;
+            }
+        }
+
+        .PaimonAni {
+            animation: PaimonAni 5s ease-in-out;
+            animation-iteration-count: infinite;
+            transform-origin: 60% 60%;
+            /*不准拽小派蒙！*/
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        @keyframes PaimonAni {
+
+            /*加载界面的小派蒙，转啊转*/
+            0% {
+                transform: rotate(-15deg);
+            }
+
+            50% {
+                transform: rotate(15deg);
+            }
+
+            100% {
+                transform: rotate(-15deg);
+            }
+        }
+
+        .UIAni {
+            animation: UIAni 0.5s ease-in;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes UIAni {
+
+            /*UI过渡动画：缩小就行*/
+            /*说明：该动画结束后对应的div并未删除，
+            如果要删除div则动画无法播放，二者目前不可兼得，
+            因此程序存在一定的瑕疵，但不影响本体功能使用*/
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(0);
+            }
+        }
+    </style>
+
+    <script>    //资源加载脚本
+        //该脚本主要是防止装到服务器上后资源加载过慢影响体验
+        //但是该加载脚本目前无法应对文件不存在的问题
+        var progress = 0;
+
+        function loadAu() {
+            for (let i = 0; i < 21; i++) {
+                let au = new Audio();
+                au.src = "audio/" + (i + 1) + ".mp3";    //1.mp3~21.mp3
+                progress += 1 / 21;    //进度累计
+                document.getElementById('pgr').innerHTML =    //进度值
+                    "正在加载音源……已完成" + parseInt(progress * 100) + "%！";
+                document.getElementById('pgrbar').style = "width:" +
+                    parseInt(progress * 100) + "%";    //进度条
+            }
+            return "OK";
+        }
+
+    </script>
+
+    <script>    //核心功能脚本
+        var keyC = {    //键位对照表(20220702)
+            //原神游戏键位
+            90: "1", 88: "2", 67: "3", 86: "4",
+            66: "5", 78: "6", 77: "7",    //ZXCVBNM
+            65: "8", 83: "9", 68: "10", 70: "11",
+            71: "12", 72: "13", 74: "14",    //ASDFGHJ
+            81: "15", 87: "16", 69: "17", 82: "18",
+            84: "19", 89: "20", 85: "21",    //QWERTYU
+            //扩展键位（数字键）
+            192: "7", 49: "8", 50: "9", 51: "10", 52: "11",
+            53: "12", 54: "13", 55: "14", 56: "15", 57: "16",
+            48: "17", 189: "18", 187: "19", 8: "20",    //~,1~9,0,-,+,bsp
+            //扩展键位（小键盘）
+            96: "5", 110: "6", 13: "7",    //0 . Enter
+            97: "8", 98: "9", 99: "10", 100: "11", 101: "12",
+            102: "13", 103: "14", 104: "15", 105: "16",    //1~9
+            107: "17", 111: "18", 106: "19", 109: "20"    //+ / * -
+            //暂不使用Num Lock，因为可能会导致奇怪的问题
+        }
+        var enable = 0;    //键盘演奏使能，当有其他界面时默认关闭使能
+
+        function notePlay(NID) {    //播放音符
+            let music = new Audio();    //创建一个音频对象
+            music.src = "audio/" + NID + ".mp3";    //给定音源路径
+            music.play();    //播放声音
+        }
+
+        function Ani(ID, cls) {    //动画生成函数
+            let key = document.getElementById(ID);
+            if (key.classList != null)    //动画类不为空时才重置(严谨)
+                key.classList.remove(cls);
+            void key.offsetTop;    //去掉这句动画就不能重置了，原因未知
+            key.classList.add(cls);
+        }
+
+        function playDo(NID) {    //包括播放、动画等的总事件操作
+            notePlay(NID);
+            Ani(NID, "keyAni");
+            Ani(NID * 100, "circleAni");
+        }
+
+        function dispKey() {    //使用document.write方法批量显示按钮
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 7; j++) {    //格式化写入img标签，写入3×7次
+                    document.write("<img src=\"image/" + (j + 1) + ".svg\" id=\"" +
+                        ((2 - i) * 7 + j + 1) + "\"" +
+                        //使按键事件只对左键生效
+                        "onmousedown = \" if(event.button == 0) playDo(this.id);\">");
+                }
+                document.write("<br>");
+            }
+        }
+
+        function dispCircle() {    //按键圆，键按下时动画显示
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 7; j++) {    //格式化写入img标签，写入3×7次
+                    document.write("<img src=\"image/circle.svg\" id=\"" +
+                        ((2 - i) * 7 + j + 1) * 100 + "\"" +
+                        //这里的opacity:0保证未按下按键时看不到按键圆
+                        "style = \"opacity:0;\">");
+                }
+                document.write("<br>");
+            }
+        }
+
+        document.addEventListener(    //使用事件监听器实现键盘操作
+            'keydown', function (e) {
+                if (e.repeat)     //防止未松开按键时重复触发
+                    return;
+                if (enable == 1)    //只有使能时才允许键盘演奏
+                    if (keyC[event.keyCode] != undefined)    //对未定义按键不响应(严谨)
+                        playDo(keyC[event.keyCode]);
+            })
+
+    </script>
+</head>
+
+<body>
+
+    <div class="staff">
+        <img src="image/staff.svg">
+    </div>
+
+    <!-- id严格来说是不能重复的，因此改用class决定div的样式(严谨) -->
+    <div class="show">
+        <script>dispCircle();</script>
+    </div>
+
+    <div class="show">
+        <script>dispKey();</script>
+    </div>
+
+    <!-- 一开始的加载界面 -->
+    <div id=loading class="load">
+
+        <!-- 概要信息 -->
+        <div class="loadbox" style="text-align: center;">
+            <h1>【原神风物之诗琴模拟器】</h1>
+            <b style=" font-size:18px">Author：嘉鸿子 ~ 版本：v0.3.11 ~ 更新于20220704</b>
+        </div>
+
+        <!-- 加载信息 -->
+        <div class="loadbox" style="text-align: center;">
+            <b id="pgr" style="font-size:18px">
+                正在加载音源……已完成0%！
+            </b>
+
+            <!-- 进度条 -->
+            <div class="progressbar">
+                <div id="pgrbar" class="bar" style="width:0%"></div>
+            </div>
+
+            <!-- 小派蒙动画 -->
+            <div class="PaimonAni">
+                <img src="image/PAIMON.svg" style="width:300px;-webkit-user-drag: none;"
+                    onmousedown="if(event.button == 0) enterMain();" />
+            </div>
+        </div>
+
+        <script>    //加载完成后按下小派蒙即可进入主界面
+            let flag = loadAu();
+            function enterMain() {
+                if (flag == "OK") {
+                    Ani("loading", "UIAni");
+                    enable = 1;    //打开键盘演奏使能
+                }
+                else {
+                    alert('还没有加载完呢！（如果一直加载不完，可能是你网不好或者网站故障了orz）');
+                }
+            }
+        </script>
+
+    </div>
+
+</body>
+
+</html>
