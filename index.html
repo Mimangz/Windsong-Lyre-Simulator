@@ -4,14 +4,27 @@
     嘉鸿子的梦想启航项目！边做边学！
 
     更新日志：
+    --20220701--
     [0.1]项目创建，实现基本功能（鼠标演奏）
-    [0.1.1]优化代码与文件，使用document.write方法创建按钮
+    [0.1.1]优化代码与文件结构，使用document.write方法创建按钮
+
+    --20220702--
     [0.2]增加键盘操作，键位与原神游戏内一致
     [0.3]增加按键动画，美化界面
 
+    --20220704--
+    [0.3.1]优化CSS，使得按键圆在没有按键按下时不显示
+    [0.3.2]优化CSS，使得按键贴图丢失时也不会排版混乱
+    [0.3.3]优化CSS，使得在正常情况下按键圆不会溢出屏幕
+    [0.3.4]修改背景为填充而不是平铺以美化界面
+    [0.3.5]修复了未松开按键时会重复播放音符的bug
+    [0.3.6]为按键区域增加不可选中属性，避免意外选中
+    [0.3.7]将onclick事件修改为onmousedown，提升使用体验
+    [0.3.8]优化按键和按键圆的动画关键帧，美化显示效果
+    [0.3.9]为演奏区域添加背景五线谱，更贴近原版
+
     更新计划：
     [0.4]添加关于信息等子界面，添加帮助
-
     [1.0]增加自动演奏、自定义编曲功能
     [1.1]增加曲目库功能
     ……
@@ -28,12 +41,10 @@
         body {
             /*给出主体背景*/
             background: url(image/bg.jpg);
+            background-size: cover;
+            background-color: black;
         }
-        
-        html{     
-            touch-action: manipulation;
-        }
-        
+
         #info {
             /*信息文字，顶部居中*/
             width: 780px;
@@ -45,8 +56,8 @@
             line-height: 30px;
         }
 
-        #show {
-            /*按键区域，底部居中*/
+        #staff {
+            /*背景五线谱，底部居中*/
             width: 780px;
             position: absolute;
             bottom: 0px;
@@ -54,18 +65,37 @@
             transform: translate(-50%, -5%);
         }
 
+        #staff img {
+            /*控制五线谱大小*/
+            width: 113%;
+            margin-left: -106px;
+            /*防止意外选中*/
+            user-select: none;
+        }
+
+        #show {
+            /*按键区域，底部居中*/
+            width: 780px;
+            position: absolute;
+            /*为底部留一定的余量*/
+            bottom: 10px;
+            left: 50%;
+            transform: translate(-50%, -5%);
+        }
+
         #show img {
-            /*按键图标，7×3排布*/
-            height: 75px;
             /*控制按键大小*/
-            margin-right: 30px;
-            /*控制按键水平间距*/
-            margin-bottom: 30px;
-            /*控制按键垂直间距*/
+            width: 75px;
+            height: 75px;
+            /*控制按键间距*/
+            margin-right: 35px;
+            margin-top: 25px;
+            /*防止意外选中*/
+            user-select: none;
         }
 
         .keyAni {
-            animation: keyAni 0.8s;
+            animation: keyAni 0.5s linear;
         }
 
         @keyframes keyAni {
@@ -79,7 +109,7 @@
             50% {
                 /*按下时变小变暗*/
                 transform: scale(0.9);
-                filter: brightness(0.85);
+                filter: brightness(0.8);
             }
 
             100% {
@@ -89,7 +119,7 @@
         }
 
         .circleAni {
-            animation: circleAni 0.8s;
+            animation: circleAni 0.5s linear;
         }
 
         @keyframes circleAni {
@@ -97,12 +127,12 @@
             /*琴键按下后按键圆的动画*/
             0% {
                 transform: scale(1);
-                opacity: 0;
+                opacity: 0.8;
             }
 
             50% {
                 /*按下时变大*/
-                transform: scale(1.6);
+                transform: scale(1.3);
                 opacity: 0.8;
             }
 
@@ -134,49 +164,54 @@
             107: "17", 111: "18", 106: "19", 109: "20"    //+ / * -
             //暂不使用Num Lock，因为可能会导致奇怪的问题
         }
+        var enable = 1;    //键盘演奏使能，当打开其他界面时关闭使能
 
-        function notePlay(NID) {    //播放音符(20220701)
+        function notePlay(NID) {    //播放音符
             let music = new Audio();    //创建一个音频对象
             music.src = "audio/" + NID + ".mp3";    //给定音源路径
             music.play();    //播放声音
         }
 
-        function Ani(ID, cls) {    //动画生成函数(20220702)
+        function Ani(ID, cls) {    //动画生成函数
             let key = document.getElementById(ID);
             key.classList.remove(cls);
             void key.offsetTop;    //去掉这句动画就不能重置了，原因未知
             key.classList.add(cls);
         }
 
-        function playDo(NID) {    //包括播放、动画等的总事件操作(20220702)
+        function playDo(NID) {    //包括播放、动画等的总事件操作
             notePlay(NID);
             Ani(NID, "keyAni");
             Ani(NID * 100, "circleAni");
         }
 
-        function dispKey() {    //使用document.write方法批量显示按钮(20220702)
+        function dispKey() {    //使用document.write方法批量显示按钮
             for (let i = 0; i < 3; i++) {
                 for (let j = 0; j < 7; j++) {    //格式化写入img标签，写入3×7次
                     document.write("<img src=\"image/" + (j + 1) + ".svg\" id=\"" +
-                        ((2 - i) * 7 + j + 1) + "\" onclick = \"playDo(this.id)\">");
+                        ((2 - i) * 7 + j + 1) + "\" onmousedown = \"playDo(this.id)\">");
                 }
                 document.write("<br>");
             }
         }
 
-        function dispCircle() {    //按键圆，键按下时动画显示(20220702)
+        function dispCircle() {    //按键圆，键按下时动画显示
             for (let i = 0; i < 3; i++) {
                 for (let j = 0; j < 7; j++) {    //格式化写入img标签，写入3×7次
                     document.write("<img src=\"image/circle.svg\" id=\"" +
-                        ((2 - i) * 7 + j + 1) * 100 + "\">");
+                        ((2 - i) * 7 + j + 1) * 100 + "\" style = \"opacity:0;\">");
+                    //这里的opacity:0保证未按下按键时看不到按键圆
                 }
                 document.write("<br>");
             }
         }
 
-        document.addEventListener(    //使用事件监听器实现键盘操作(20220702)
-            'keydown', function () {
-                playDo(keyC[event.keyCode]);
+        document.addEventListener(    //使用事件监听器实现键盘操作
+            'keydown', function (e) {
+                if (e.repeat)     //防止未松开按键时重复触发
+                    return;
+                if (enable == 1)    //只有使能时才允许键盘演奏
+                    playDo(keyC[event.keyCode]);
             })
 
     </script>
@@ -186,7 +221,7 @@
 
     <div id="info">
         <br>
-        <h1>原神风物之诗琴模拟器 v0.3.beta by嘉鸿子</h1>
+        <h1>原神风物之诗琴模拟器 v0.3.9 by嘉鸿子</h1>
         <b>嘉鸿子的梦想启航项目！边做边学！</b>
         <br>
         <b>操作方法：鼠标点击或键盘操作（与原神内键位一致，另支持数字键和小键盘）</b>
@@ -194,6 +229,10 @@
         <b>0.4~增加帮助说明，优化UI</b><br>
         <b>1.0~增加编曲功能</b><br>
         <b>详见源代码内的更新日志。</b>
+    </div>
+
+    <div id="staff">
+        <img src="image/staff.svg">
     </div>
 
     <div id="show">
