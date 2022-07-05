@@ -31,6 +31,7 @@
     [0.3.14]增加加载时间过长的提示，避免尴尬卡死
     [0.3.15]增加允许在部分资源无法加载的情况下强行进入主体的功能
     [0.4]修复一些小bug，进一步完善程序，发布稳定版本(0.4)
+    [0.4.1]优化资源加载界面等待机制以及部分提示文本
 
     更新计划（暂定）：
     [0.5]添加关于信息等子界面，添加帮助
@@ -198,7 +199,7 @@
 
         .Paimon {
             /*加载界面的派蒙*/
-            width: 300px;
+            width: 260px;
             transform: translate(-10%, 0);
             -webkit-user-drag: none;
         }
@@ -287,18 +288,25 @@
             document.getElementById('pgrbar').style = "width:" +
                 parseInt(progress * 100) + "%";    //进度条刷新
             tries++;
-            if (tries < 50 || progress == 1) {    //如果加载完成了，即便超时也不显示提示
-                document.getElementById('pgr').innerHTML =    //进度值刷新
-                    "正在加载资源……已完成 " + parseInt(progress * 100) + " %！";
+            if (progress < 1) {
+                if (tries < 50) {
+                    document.getElementById('pgr').innerHTML =    //进度值刷新
+                        "正在加载资源……已完成 " + parseInt(progress * 100) + " %！";
+                }
+                else {    //如果10秒后仍然没加载完成，显示提示
+                    document.getElementById('pgr').innerHTML =    //进度值刷新
+                        "正在加载资源……已完成 " + parseInt(progress * 100) + " %！<br>" +
+                        "<a class=\"bold14\" href=\"javascript:void(0);\"" +
+                        "onmousedown=\"forceEnter();\">单击此处强行进入程序</a>" +
+                        "<b class=\"bold12\">(不推荐，建议等待资源加载完毕)</b>" +
+                        "<br><b class=\"bold12\">加载时间有点儿长，" +
+                        "可能是网络不稳定或者资源丢失啥的……" +
+                        "<br>可以试着刷新一下网页，或者打开控制台看看有没有报错_(:з」∠)_</b>";
+                }
             }
-            else {    //如果10秒后仍然没加载完成，显示提示
+            else {
                 document.getElementById('pgr').innerHTML =    //进度值刷新
-                    "正在加载资源……已完成 " + parseInt(progress * 100) + " %！<br>" +
-                    "<a class=\"bold14\" href=\"javascript:void(0);\"" +
-                    "onmousedown=\"forceEnter();\">单击此处强行进入程序(不推荐)</a><br>" +
-                    "<b class=\"bold12\">啊这…加载时间有点儿长，可能是网络不稳定或者资源丢失啥的…" +
-                    "<br>可以试着刷新一下网页，或者打开控制台看看有没有报错_(:з」∠)_</b>";
-
+                    "加载完成！点击派蒙开始演奏吧！ ";
             }
         }, 200);
 
@@ -418,7 +426,7 @@
         <!-- 概要信息 -->
         <div class="loadbox">
             <h1>【原神风物之诗琴模拟器】</h1>
-            <b class="bold18">By 嘉鸿子 ~ 版本：v0.4 ~ 更新于20220705</b>
+            <b class="bold18">By 嘉鸿子 ~ 版本：v0.4.1 ~ 更新于20220705</b>
         </div>
 
         <!-- 加载信息 -->
