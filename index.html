@@ -54,7 +54,7 @@
 <head>
     <meta charset="UTF-8" />
     <!-- 添加移动设备访问适配(严谨) -->
-    <meta name="viewport" content="width = device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.5" />
 
     <title>原神风物之诗琴模拟器</title>
 
@@ -199,7 +199,7 @@
 
         .Paimon {
             /*加载界面的派蒙*/
-            width: 260px;
+            width: 280px;
             transform: translate(-10%, 0);
             -webkit-user-drag: none;
         }
@@ -297,11 +297,11 @@
                     document.getElementById('pgr').innerHTML =    //进度值刷新
                         "正在加载资源……已完成 " + parseInt(progress * 100) + " %！<br>" +
                         "<a class=\"bold14\" href=\"javascript:void(0);\"" +
-                        "onmousedown=\"forceEnter();\">单击此处强行进入程序</a>" +
-                        "<b class=\"bold12\">(不推荐，建议等待资源加载完毕)</b>" +
-                        "<br><b class=\"bold12\">加载时间有点儿长，" +
-                        "可能是网络不稳定或者资源丢失啥的……" +
-                        "<br>可以试着刷新一下网页，或者打开控制台看看有没有报错_(:з」∠)_</b>";
+                        "onmousedown=\"if(event.button == 0) forceEnter();\">" +
+                        "单击此处强行进入程序</a><b class=\"bold12\">" +
+                        "(不推荐，建议等待资源加载完毕)</b><br>" +
+                        "<b class=\"bold12\">网络不畅或资源异常，" +
+                        "可以再耐心等等，也可以选择直接进入</b>";
                 }
             }
             else {
@@ -372,6 +372,7 @@
             for (let i = 0; i < 3; i++) {
                 for (let j = 0; j < 7; j++) {    //格式化写入img标签，写入3×7次
                     document.write("<img src=\"image/" + (j + 1) + ".svg\" id=\"" +
+                        //加上空的alt标签是为了避免出现警告(严谨)
                         ((2 - i) * 7 + j + 1) + "\"" + "alt = \"\"" +
                         //使按键事件只对左键生效
                         "onmousedown = \" if(event.button == 0) playDo(this.id);\">");
