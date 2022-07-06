@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+
+<html lang="zh">
+<!-- 最好加上语言标识(严谨) -->
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- 添加移动设备访问适配(严谨) -->
+    <meta name="viewport" content="width=device-width,
+    initial-scale=0.4, user-scalable=0" />
+
+    <title>原神风物之诗琴模拟器</title>
+
+    <!-- 引入外部样式表 -->
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <!-- 为网页添加个小图标 -->
+    <link rel="shortcut icon" href="./image/icon.png">
+
+</head>
+
+<body>
+
+    <!-- 置于底层的五线谱背景 -->
+    <div class="staff">
+        <img src="./image/staff.svg" alt="">
+    </div>
+
+    <div class="show" id="show-circle">
+    </div>
+
+    <div class="show" id="show-key">
+    </div>
+
+    <!-- 一开始的加载界面 -->
+    <div id=loading class="load">
+
+        <!-- 概要信息 -->
+        <div class="load-box">
+            <h1>【原神风物之诗琴模拟器】</h1>
+            <b class="font-18">By 迷茫子 ~ 版本：v0.5 ~ 更新于20220705</b>
+        </div>
+
+        <!-- 加载信息 -->
+        <div class="load-box">
+
+            <!-- 进度条 -->
+            <div class="progress-bar">
+                <div id="progress-bar" class="bar"></div>
+            </div>
+
+            <!-- 进度值 -->
+            <b id="progress-info" class="font-18">
+                正在加载资源……已完成 0 %！
+            </b>
+
+            <!-- 小派蒙动画 -->
+            <div class="paimon-animation">
+                <img src="./image/PAIMON.svg" class="paimon" alt="加载完后戳我开始"
+                    onmousedown="if(event.button == 0) enterMain();" />
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 引入外部js(一般放在body尾部) -->
+    <script src="./index.js"></script>
+
+</body>
+
+</html>
