@@ -1,8 +1,11 @@
         /*给出主体背景*/
         body {
+            height: 500px;
             background: url(image/bg.jpg);
             background-size: cover;
             background-color: black;
+            /*移动设备去延迟（Beta）*/
+            touch-action: manipulation;
         }
 
         /*给出加载背景*/
@@ -197,17 +200,110 @@
             }
         }
 
-        /*字号12的文字*/
+        /*通用的窗口盒子*/
+        .func-box {
+            /*基本属性*/
+            width: 700px;
+            height: 450px;
+            opacity: 0.9;
+            /*设定绝对居中*/
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            /*盒子的描边、圆角与背景色*/
+            border: 5px solid black;
+            border-radius: 7.5% / 12%;
+            background-color: lightskyblue;
+            /*盒子初始不显示*/
+            display: none;
+        }
+
+        /*关于信息文字*/
+        .about-text {
+            width: 80%;
+            position: absolute;
+            top: 5%;
+            left: 10%;
+            line-height: 1.5;
+        }
+
+        /*关闭按钮*/
+        .close-button {
+            top: 3%;
+            position: absolute;
+            right: 10%;
+            /*防止这个关闭按钮被意外选中*/
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /*顶部菜单*/
+        .menu-ui {
+            width: 750px;
+            height: 35px;
+            position: absolute;
+            top: 30px;
+            left: 0;
+            right: 0;
+            margin: auto;
+            display: flex;
+            justify-content: space-around;
+            background-color: dodgerblue;
+            box-shadow: 0 0 10px 10px dodgerblue;
+        }
+
+        /*顶部菜单按钮*/
+        .menu-button {
+            width: 100px;
+            height: 30px;
+            border: 2px solid black;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 9% / 30%;
+            text-align: center;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /*盒子背景板*/
+        .box-bg {
+            /*设定背景颜色*/
+            background-color: rgba(0, 0, 0, 0.3);
+            /*设定绝对居中*/
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            /*盒子初始不显示*/
+            display: none;
+        }
+
+        /*各种各样的字号*/
         .font-12 {
             font-size: 12px;
         }
 
-        /*字号14的文字*/
         .font-14 {
             font-size: 14px;
         }
 
-        /*字号18的文字*/
         .font-18 {
             font-size: 18px;
+        }
+
+        .font-24 {
+            font-size: 24px;
+        }
+
+        .font-36 {
+            font-size: 36px;
+        }
+
+        .bold {
+            font-weight: bold;
         }
