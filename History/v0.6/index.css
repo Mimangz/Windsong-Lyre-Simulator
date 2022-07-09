@@ -1,0 +1,309 @@
+        /*给出主体背景*/
+        body {
+            height: 500px;
+            background: url(image/bg.jpg);
+            background-size: cover;
+            background-color: black;
+            /*移动设备去延迟（Beta）*/
+            touch-action: manipulation;
+        }
+
+        /*给出加载背景*/
+        .load {
+            background-color: royalblue;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        /*加载信息框*/
+        .load-box {
+            width: 600px;
+            margin: 60px auto;
+            background-color: dodgerblue;
+            box-shadow: 0 0 20px 20px dodgerblue;
+            text-align: center;
+        }
+
+        /*进度条外框*/
+        .progress-bar {
+            background-color: #eee;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            height: 16px;
+            width: 250px;
+            border: 1px solid #bbb;
+        }
+
+        /*进度条内条*/
+        .progress-bar .bar {
+            background-color: royalblue;
+            height: 16px;
+            width: 0%;
+            width: 0;
+        }
+
+        /*背景五线谱盒子*/
+        /*按键和按键圆盒子*/
+        .staff,
+        .show {
+            width: 900px;
+            height: 310px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin: auto;
+            /*防止意外选中*/
+            /*出于兼容性加上下面这条(严谨)*/
+            -webkit-user-select: none;
+            user-select: none;
+            text-align: center;
+        }
+
+        /*样式追加：背景五线谱偏移*/
+        .staff {
+            transform: translate(-0.5%, 0%);
+            bottom: 20px;
+        }
+
+        /*样式追加：按键和按键圆偏移*/
+        .show {
+            transform: translate(5%, 0%);
+            bottom: 30px;
+        }
+
+        /*背景五线谱*/
+        .staff img {
+            /*控制五线谱大小*/
+            height: 308px;
+            /*防止意外拖动*/
+            -webkit-user-drag: none;
+        }
+
+        /*按键和按键圆*/
+        .show img {
+            /*控制按键大小*/
+            width: 75px;
+            height: 75px;
+            /*控制按键间距*/
+            margin-right: 35px;
+            margin-top: 25px;
+            /*防止意外拖动*/
+            -webkit-user-drag: none;
+        }
+
+        /*初始按键圆*/
+        .initial-circle {
+            opacity: 0;
+        }
+
+        /*琴键按下的动画*/
+        .key-animation {
+            animation: key-animation 0.5s linear;
+        }
+
+        /*琴键动画细节*/
+        @keyframes key-animation {
+            0% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+
+            50% {
+                /*按下时变小变暗*/
+                transform: scale(0.9);
+                filter: brightness(0.8);
+            }
+
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+        }
+
+        /*琴键按下后按键圆的动画*/
+        .circle-animation {
+            animation: circle-animation 0.5s linear;
+        }
+
+        /*按键圆动画细节*/
+        @keyframes circle-animation {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            50% {
+                /*按下时变大*/
+                transform: scale(1.3);
+                opacity: 0.8;
+            }
+
+            100% {
+                /*最后淡出*/
+                transform: scale(1.6);
+                opacity: 0;
+            }
+        }
+
+        /*加载界面的派蒙*/
+        .paimon {
+            width: 280px;
+            transform: translate(-10%, 0);
+            -webkit-user-drag: none;
+        }
+
+        /*加载界面的派蒙的动画*/
+        .paimon-animation {
+            animation: paimon-animation 5s ease-in-out;
+            animation-iteration-count: infinite;
+            transform-origin: 50% 60%;
+            /*不准拽小派蒙！*/
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /*派蒙动画细节*/
+        @keyframes paimon-animation {
+            0% {
+                transform: rotate(-15deg);
+            }
+
+            50% {
+                transform: rotate(15deg);
+            }
+
+            100% {
+                transform: rotate(-15deg);
+            }
+        }
+
+        /*UI过渡动画：缩小就行*/
+        .ui-animation {
+            animation: ui-animation 0.5s ease-in;
+            animation-fill-mode: forwards;
+        }
+
+        /*UI过渡动画细节*/
+        @keyframes ui-animation {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        /*通用的窗口盒子*/
+        .func-box {
+            /*基本属性*/
+            width: 700px;
+            height: 450px;
+            opacity: 0.9;
+            /*设定绝对居中*/
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            /*盒子的描边、圆角与背景色*/
+            border: 5px solid black;
+            border-radius: 7.5% / 12%;
+            background-color: lightskyblue;
+            /*盒子初始不显示*/
+            display: none;
+        }
+
+        /*关于信息文字*/
+        .about-text {
+            width: 80%;
+            position: absolute;
+            top: 5%;
+            left: 10%;
+            line-height: 1.5;
+        }
+
+        /*关闭按钮*/
+        .close-button {
+            top: 3%;
+            position: absolute;
+            right: 10%;
+            /*防止这个关闭按钮被意外选中*/
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /*顶部菜单*/
+        .menu-ui {
+            width: 750px;
+            height: 35px;
+            position: absolute;
+            top: 30px;
+            left: 0;
+            right: 0;
+            margin: auto;
+            display: flex;
+            justify-content: space-around;
+            background-color: dodgerblue;
+            box-shadow: 0 0 10px 10px dodgerblue;
+        }
+
+        /*顶部菜单按钮*/
+        .menu-button {
+            width: 100px;
+            height: 30px;
+            border: 2px solid black;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 9% / 30%;
+            text-align: center;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /*盒子背景板*/
+        .box-bg {
+            /*设定背景颜色*/
+            background-color: rgba(0, 0, 0, 0.3);
+            /*设定绝对居中*/
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            /*盒子初始不显示*/
+            display: none;
+        }
+
+        /*各种各样的字号*/
+        .font-12 {
+            font-size: 12px;
+        }
+
+        .font-14 {
+            font-size: 14px;
+        }
+
+        .font-18 {
+            font-size: 18px;
+        }
+
+        .font-24 {
+            font-size: 24px;
+        }
+
+        .font-36 {
+            font-size: 36px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }

@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+
+<html lang="zh">
+<!-- 最好加上语言标识(严谨) -->
+
+<head>
+    <meta charset="UTF-8" />
+
+    <title>原神风物之诗琴模拟器</title>
+
+    <!-- 引入外部样式表 -->
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <!-- 为网页添加个小图标 -->
+    <link rel="shortcut icon" href="./image/icon.png">
+
+</head>
+
+<body>
+
+    <!-- 置于底层的五线谱背景 -->
+    <div class="staff">
+        <img src="./image/staff.svg" alt="">
+    </div>
+
+    <!-- 置于中层的按键圆 -->
+    <div id="show-circle" class="show">
+    </div>
+
+    <!-- 置于顶层的按键 -->
+    <div id="show-key" class="show">
+    </div>
+
+    <!-- 置于上方的菜单 -->
+    <div class="menu-ui font-18 bold">
+        <div class="font-24">【原神风物之诗琴模拟器】</div>
+        <div class="menu-button" onclick="showBox('nul1');showBox('box-bg');">
+            编曲模式</div>
+        <div class="menu-button" onclick="showBox('nul2');showBox('box-bg');">
+            游戏模式</div>
+        <div class="menu-button" onclick="showBox('about');showBox('box-bg');">
+            关于…</div>
+    </div>
+
+    <!-- 加载界面（加载完后自动删除） -->
+    <div id=loading class="load">
+
+        <!-- 概要信息 -->
+        <div class="load-box">
+            <h1>【原神风物之诗琴模拟器】</h1>
+            <b class="font-18">温馨提示：使用PC端操作体验更佳哦~</b>
+        </div>
+
+        <!-- 加载信息 -->
+        <div class="load-box">
+
+            <!-- 进度条 -->
+            <div class="progress-bar">
+                <div id="progress-bar" class="bar"></div>
+            </div>
+
+            <!-- 进度值 -->
+            <b id="progress-info" class="font-18">
+                正在加载资源……已完成 0 %！
+            </b>
+
+            <!-- 小派蒙动画 -->
+            <div class="paimon-animation">
+                <img src="./image/PAIMON.svg" class="paimon" alt="加载完后戳我开始"
+                    onmousedown="if(event.button == 0) enterMain();" />
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 有窗口打开时的背景蒙版 -->
+    <div id="box-bg" class="box-bg">
+        <!-- 游戏模式 -->
+        <div id="nul2" class="func-box">
+            <div class="about-text">
+                <b class="font-24">啊呀！</b><br><br>
+                <b>游戏模式还没有实装呢_(:з」∠)_</b><br>
+                <b>请期待后续更新！</b>
+            </div>
+            <div class="close-button">
+                <b class="font-36" onclick="hideBox('nul2');hideMenuBg();">
+                    ×</b>
+            </div>
+        </div>
+
+        <!-- 编曲模式 -->
+        <div id="nul1" class="func-box">
+            <div class="about-text">
+                <b class="font-24">啊呀！</b><br><br>
+                <b>编曲模式还没有实装呢_(:з」∠)_</b><br>
+                <b>请期待后续更新！</b>
+            </div>
+            <div class="close-button">
+                <b class="font-36" onclick="hideBox('nul1');hideMenuBg();">
+                    ×</b>
+            </div>
+        </div>
+
+        <!-- 关于信息 -->
+        <div id="about" class="func-box">
+            <div class="about-text">
+                <b class="font-24">关于本程序</b><br>
+                <i>一个简单的原神风物之诗琴模拟器。</i><br><br>
+                <b>操作方法：</b>使用鼠标或者键盘演奏。<br>
+                键盘键位与原神游戏内键位一致，另支持数字键和小键盘。<br>
+                <b>注：编曲模式和游戏模式尚未实装，敬请期待。</b>
+                <br><br>
+                <b>作者：<a href="https://github.com/mimangz" target="_blank">
+                        迷茫子</a></b>(联系方式：1903913308@qq.com)
+                <br>
+                <b>版本：</b>v0.6
+                <br>
+                <b>更新日志：</b>
+                <br>
+                [0.6]添加菜单界面、关于信息窗口，修复细节问题。<br>
+                [0.5]代码逻辑与结构大优化。<br>
+                [0.4]修复一些小bug，进一步完善程序，发布稳定版本。<br>
+                [0.3]增加按键动画，美化界面，发布早期开发版本。<br>
+                详见<b>README</b>文件。
+            </div>
+            <div class="close-button">
+                <b class="font-36" onclick="hideBox('about');hideMenuBg();">
+                    ×</b>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入外部js(一般放在body尾部) -->
+    <script src="./index.js"></script>
+
+</body>
+
+</html>
