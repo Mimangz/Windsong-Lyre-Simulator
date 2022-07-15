@@ -200,9 +200,179 @@ function hideAll() {    //无条件直接关闭所有窗口，隐藏背景板，
     }
 }
 
-document.addEventListener(    //按Esc关闭所有窗口
+document.addEventListener(
     'keydown', function (e) {
+        //按Esc关闭所有窗口
         if (e.code == 'Escape') {
             hideAll();
         }
+        //按P打开编曲模式
+        if (e.code == 'KeyP' && checkBox() == 0) {
+            showBox('make-music');
+            showBox('box-bg');
+        }
     })
+
+/*************************
+     Part.IV 编曲模式函数
+ *************************/
+let clock = 0;    //标识setInterval，用于关闭循环
+let isPlay = 0;    //正在播放吗？
+let numC = {    //简谱对照表
+    11: 1, 12: 2, 13: 3, 14: 4, 15: 5, 16: 6, 17: 7,
+    21: 8, 22: 9, 23: 10, 24: 11, 25: 12, 26: 13, 27: 14,
+    31: 15, 32: 16, 33: 17, 34: 18, 35: 19, 36: 20, 37: 21
+}
+
+function resetInput() {    //重置编曲模式的输入框
+    document.getElementById('sheet').value = '';
+    document.getElementById('bpm').value = '240';
+}
+
+function playSheet() {    //播放曲谱初始化
+    let mode = document.getElementById('read-mode').options.selectedIndex;
+    let sheet = document.getElementById('sheet').value;
+    let bpm = document.getElementById('bpm').value;
+    if (isPlay == 0) {
+        if (mode == 0) { keyMode(sheet, bpm); }
+        if (mode == 1) { numMode(sheet, bpm); }
+        if (mode == 2) { chaosMode(sheet, bpm); }
+    }
+}
+
+function stopSheet() {    //停止曲谱播放
+    isPlay = 0;
+    clearInterval(clock);
+}
+
+function keyMode(sheet, bpm) {    //按键模式演奏
+    isPlay = 1;
+    let sheetArr = sheet.toUpperCase().split('');
+    let realArr = [];
+    for (let i = 0; i < sheetArr.length; i++) {
+        if (sheetArr[i] == '\n') {    //忽略换行
+            continue;
+        }
+        else if (sheetArr[i] == '\(') {
+            let temp = '';
+            let harmonyCount = 0;
+            while (sheetArr[i + 1] != '\)') {
+                i++;
+                harmonyCount++;
+                temp += sheetArr[i];
+                //允许最大和弦数量为7，否则直接忽视剩余部分和右括号
+                if (harmonyCount >= 7) { break; }
+            }
+            realArr.push(temp);
+            i++;
+        }
+        else if (sheetArr[i] == ' ') {    //使用O作为空拍占位
+            realArr.push('O');
+        }
+        else {
+            realArr.push(sheetArr[i]);
+        }
+    }
+    //根据给定的播放速度按序播放
+    let playCount = 0;
+    clock = setInterval(() => {
+        if (realArr[playCount] != undefined) {
+            if (realArr[playCount].length == 1) {
+                let realKey = 'Key' + realArr[playCount];
+                if (keyC[realKey] != undefined) {
+                    playDo(keyC[realKey]);
+                }
+            }
+            else {
+                let repeat = realArr[playCount].length;
+                for (let i = 0; i < repeat; i++) {
+                    let realKey = 'Key' + realArr[playCount][i];
+                    if (keyC[realKey] != undefined) {
+                        playDo(keyC[realKey]);
+                    }
+                }
+            }
+            playCount++;
+            if (playCount == realArr.length) {
+                isPlay = 0;
+                clearInterval(clock);
+            }
+        }
+        else {
+            isPlay = 0;
+            clearInterval(clock);
+        }
+    }, 60000 / bpm);
+}
+
+function numMode(sheet, bpm) {    //简谱模式演奏
+    isPlay = 1;
+    let sheetArr = sheet.replace('\n', ' ');
+    sheetArr = sheetArr.split(' ');
+    let realArr = [];
+    for (let i = 0; i < sheetArr.length; i++) {
+        if (sheetArr[i] == '\(') {
+            let temp = [];
+            let harmonyCount = 0;
+            while (sheetArr[i + 1] != '\)') {
+                i++;
+                harmonyCount++;
+                temp.push(parseInt(sheetArr[i]));
+                //允许最大和弦数量为7，否则直接忽视剩余部分和右括号
+                if (harmonyCount >= 7) { break; }
+            }
+            realArr.push(temp);
+            i++;
+        }
+        else {
+            realArr.push(parseInt(sheetArr[i]));
+        }
+    }
+    //根据给定的播放速度按序播放
+    let playCount = 0;
+    clock = setInterval(() => {
+        if (realArr[playCount] != undefined) {
+            //如果只是一个数字，它是没有长度的
+            if (realArr[playCount].length == undefined) {
+                //确保该音符有意义再进行播放
+                if (numC[realArr[playCount]] != undefined) {
+                    playDo(numC[realArr[playCount]]);
+                }
+            }
+            else {
+                let repeat = realArr[playCount].length;
+                for (let i = 0; i < repeat; i++) {
+                    if (numC[realArr[playCount][i]] != undefined) {
+                        playDo(numC[realArr[playCount][i]]);
+                    }
+                }
+            }
+            playCount++;
+            if (playCount == realArr.length) {
+                isPlay = 0;
+                clearInterval(clock);
+            }
+        }
+        else {
+            isPlay = 0;
+            clearInterval(clock);
+        }
+    }, 60000 / bpm);
+}
+
+function chaosMode(sheet, bpm) {    //混沌模式演奏
+    let chaosSheet = '';
+    for (let i = 0; i < sheet.length; i++) {
+        //即便是混沌模式，空格或换行也空拍
+        if (sheet[i] == ' ' || sheet[i] == '\n') {
+            chaosSheet += 'O';
+        }
+        else {
+            //奇怪的编码方式
+            chaosSheet += String.fromCharCode
+                ([sheet[i].charCodeAt() % 26 + 65]);
+        }
+    }
+    //使用按键模式强行播放
+    keyMode(chaosSheet, bpm);
+}
