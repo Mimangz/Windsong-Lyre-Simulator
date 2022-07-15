@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+
+<html lang="zh">
+<!-- 最好加上语言标识(严谨) -->
+
+<head>
+    <meta charset="UTF-8" />
+
+    <title>原神风物之诗琴模拟器</title>
+
+    <!-- 引入外部样式表 -->
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <!-- 为网页添加个小图标 -->
+    <link rel="shortcut icon" href="./image/icon.png">
+
+</head>
+
+<body>
+
+    <!-- 置于底层的五线谱背景 -->
+    <div class="staff">
+        <img src="./image/staff.svg" alt="">
+    </div>
+
+    <!-- 置于中层的按键圆 -->
+    <div id="show-circle" class="show">
+    </div>
+
+    <!-- 置于顶层的按键 -->
+    <div id="show-key" class="show">
+    </div>
+
+    <!-- 置于上方的菜单 -->
+    <div class="menu-ui font-18 bold">
+        <div class="font-24">【原神风物之诗琴模拟器】</div>
+        <div class="menu-button" onclick="showBox('make-music');showBox('box-bg');">
+            编曲模式</div>
+        <div class="menu-button" onclick="showBox('nul2');showBox('box-bg');">
+            游戏模式</div>
+        <div class="menu-button" onclick="showBox('about');showBox('box-bg');">
+            关于…</div>
+    </div>
+
+    <!-- 加载界面（加载完后自动删除） -->
+    <div id="loading" class="load">
+
+        <!-- 概要信息 -->
+        <div class="load-box">
+            <h1>【原神风物之诗琴模拟器】</h1>
+            <b class="font-18">温馨提示：使用PC端操作体验更佳哦~</b>
+        </div>
+
+        <!-- 加载信息 -->
+        <div class="load-box">
+
+            <!-- 进度条 -->
+            <div class="progress-bar">
+                <div id="progress-bar" class="bar"></div>
+            </div>
+
+            <!-- 进度值 -->
+            <b id="progress-info" class="font-18">
+                正在加载资源……已完成 0 %！
+            </b>
+
+            <!-- 小派蒙动画 -->
+            <div class="paimon-animation">
+                <img src="./image/PAIMON.svg" class="paimon" alt="加载完后戳我开始"
+                    onmousedown="if(event.button == 0) enterMain();" />
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 有窗口打开时的背景蒙版 -->
+    <div id="box-bg" class="box-bg">
+        <!-- 游戏模式 -->
+        <div id="nul2" class="func-box">
+            <div class="inner-text">
+                <b class="font-24">啊呀！</b><br><br>
+                <b>游戏模式还没有实装呢_(:з」∠)_</b><br>
+                <b>请期待后续更新！</b>
+            </div>
+            <div class="close-button">
+                <b class="font-36" onclick="hideBox('nul2');hideMenuBg();">
+                    ×</b>
+            </div>
+        </div>
+
+        <!-- 编曲模式 -->
+        <div id="make-music" class="func-box">
+            <div class="inner-text">
+                <b class="font-24">编曲模式</b>
+                <u onclick="showBox('music-help');">[<b>帮助</b>]</u><br>
+                <hr>
+                <b>请选择读取模式：</b>
+                <select id="read-mode" class="font-14">
+                    <option>按键模式</option>
+                    <option>简谱模式</option>
+                    <option>混沌模式</option>
+                </select><br>
+                <b>请输入音符序列：</b><br>
+                <textarea id="sheet" class="sheet-input font-set"></textarea><br>
+                <b>请输入播放速度(每分钟音符数)：</b><br>
+                <textarea id="bpm" class="bpm-input font-set">240</textarea><br>
+            </div>
+            <div class="close-button">
+                <b class="font-36" onclick="hideBox('make-music');hideMenuBg();">
+                    ×</b>
+            </div>
+            <div class="play">
+                <button class="play-button" onclick="playSheet();">
+                    <b class="font-18">播放</b></button>
+                <button class="play-button" onclick="stopSheet();">
+                    <b class="font-18">停止</b></button>
+                <button class="play-button" onclick="resetInput();">
+                    <b class="font-18">清空</b></button>
+            </div>
+        </div>
+
+        <!-- 编曲模式帮助 -->
+        <div id="music-help" class="func-box">
+            <div class="inner-text">
+                <b class="font-24">编曲の帮助 |
+                </b>
+                <i>用最简单的方式自动演奏出你想要的音乐！</i><br>
+                <hr>
+                <b>使用方法：</b>支持三种不同的编曲模式。<br>
+                <b>①按键模式：</b>
+                输入与原神游戏内一样的按键序列即可。<br>
+                不区分大小写。若输入非音符字符或空格则表示空拍。<br>
+                如《小星星》前两句为 <b>AAGGHHG FFDDSSA</b><br>
+                <b>②简谱模式：</b>
+                输入代表音符的二位数，用<b> 0 </b>(其他数字也可)代表空拍。<br>
+                音符之间用空格隔开。如《小星星》前两句为<br>
+                <b>21 21 25 25 26 26 25 0 <br>
+                    24 24 23 23 22 22 21 0</b><br>
+                两种模式下换行符均被自动无视，因此如需行末空拍仍需加空拍符号。<br>
+                <b>③混沌模式：</b>将序列以一定方式编码并用按键模式强行播放。(纯属娱乐)<br>
+                <b>④和弦/多押：</b>若要同时播放多个音符，将其写在一个括号里即可。<br>
+                如大三和弦为<b>(ADG)</b>或者
+                <b>( 21 23 25 )</b>，注意是英文括号。<br>
+                最多允许7音和弦，超出部分将作截断处理。<br>
+                简谱模式下括号前后<b>必须有空格</b>，否则会出错。<br>
+                <b>⑤播放速度：</b>指的是每分钟播放音符的数量(含空拍)，默认为240。<br>
+            </div>
+            <div class="close-button">
+                <b class="font-36" onclick="hideBox('music-help');">
+                    ×</b>
+            </div>
+        </div>
+
+        <!-- 关于信息 -->
+        <div id="about" class="func-box">
+            <div class="inner-text">
+                <b class="font-24">关于本程序</b><br>
+                <i>一个简单的原神风物之诗琴模拟器。</i><br>
+                <hr>
+                <b>操作方法：</b>使用鼠标或者键盘演奏。<br>
+                键盘键位与原神游戏内键位一致，另支持数字键和小键盘。<br>
+                <b>按P或点击菜单打开编曲模式。游戏模式尚未实装，敬请期待。</b>
+                <br><br>
+                <b>作者：<a href="https://github.com/mimangz" target="_blank">
+                        迷茫子</a></b>(联系方式：1903913308@qq.com)
+                <br>
+                <b>版本：</b>v1.0
+                <br>
+                <b>更新日志：</b>
+                <br>
+                [1.0]实装编曲模式！同时优化大量细节。<br>
+                [0.7]主要为1.0版本的编曲模式做准备。<br>
+                [0.6]添加菜单界面、关于信息窗口，修复细节问题。<br>
+                [0.5]代码逻辑与结构大优化。<br>
+                [0.4]修复一些小bug，进一步完善程序，发布稳定版本。<br>
+                详见<b>README</b>文件。
+            </div>
+            <div class="close-button">
+                <b class="font-36" onclick="hideBox('about');hideMenuBg();">
+                    ×</b>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入外部js(一般放在body尾部) -->
+    <script src="./index.js"></script>
+
+</body>
+
+</html>
