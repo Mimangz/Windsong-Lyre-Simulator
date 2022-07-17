@@ -307,7 +307,7 @@ function keyMode(sheet, bpm) {    //按键模式演奏
 
 function numMode(sheet, bpm) {    //简谱模式演奏
     isPlay = 1;
-    let sheetArr = sheet.replace('\n', ' ');
+    let sheetArr = sheet.replaceAll('\n', ' ');
     sheetArr = sheetArr.split(' ');
     let realArr = [];
     for (let i = 0; i < sheetArr.length; i++) {
