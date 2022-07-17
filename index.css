@@ -27,24 +27,36 @@
             text-align: center;
         }
 
-        /*进度条外框*/
+        /*进度条盒子*/
         .progress-bar {
-            background-color: #eee;
+            position: relative;
             margin-left: auto;
             margin-right: auto;
             margin-top: 5px;
             margin-bottom: 5px;
-            height: 16px;
+            height: 32px;
             width: 250px;
-            border: 1px solid #bbb;
         }
 
-        /*进度条内条*/
-        .progress-bar .bar {
-            background-color: royalblue;
-            height: 16px;
-            width: 0%;
-            width: 0;
+        /*进度条底条*/
+        .loading-down {
+            position: absolute;
+            /*实际大小为250×33*/
+            width: 250px;
+            top: 0;
+            left: 0;
+            opacity: 0.1;
+        }
+
+        /*进度条顶条*/
+        .loading-up {
+            position: absolute;
+            width: 250px;
+            top: 0;
+            left: 0;
+            /*通过裁切实现进度条变化*/
+            clip: rect(0px, 50px, 33px, 0px);
+            opacity: 0.9;
         }
 
         /*背景五线谱盒子*/

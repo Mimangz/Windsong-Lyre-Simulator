@@ -22,8 +22,8 @@ let inv = setInterval(() => {    //循环执行，统计加载进度
     if (bgimg.complete)
         flag += 4;
     progress = flag / 88;    //进度累计
-    document.getElementById('progress-bar').style = 'width:' +
-        parseInt(progress * 100) + '%';    //进度条刷新
+    document.getElementById('loading-bar').style = 'clip:' +
+        ' rect(0px, ' + progress * 250 + 'px, 33px, 0px);';    //进度条刷新
     tries++;
     if (progress < 1) {
         if (tries < 50) {
